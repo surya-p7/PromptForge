@@ -1,14 +1,18 @@
-fastapi
-uvicorn[standard]
-pydantic
-python-dotenv
-requests
-openai
-google-generativeai
-faiss-cpu
-sentence-transformers
-transformers
-pytest
-httpx
-rich
+fastapi==0.115.5
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+httpx==0.28.1
+
+# LLM providers
+google-generativeai==0.8.5
+openai==1.61.0
+
+# Optional but small: logging + tests
+loguru==0.7.2
+pytest==9.0.1
+
 gunicorn
+requests
+os
