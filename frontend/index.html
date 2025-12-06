@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>LLM Orchestration Console</title>
+<style>
+  body {
+    margin: 0;
+    background: #0d1117;
+    font-family: "Inter", sans-serif;
+    color: #e6edf3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+  }
+
+  h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 760px;
+    background: #161b22;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  textarea {
+    width: 100%;
+    height: 140px;
+    background: #0d1117;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 15px;
+    resize: vertical;
+  }
+
+  select {
+    background: #21262d;
+    color: #e6edf3;
+    border: 1px solid #30363d;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+  }
+
+  button {
+    background: #238636;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  button:hover {
+    background: #2ea043;
+  }
+
+  #output {
+    margin-top: 20px;
+    padding: 20px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+
+  .meta {
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: #8b949e;
+  }
+
+  .loader {
+    border: 4px solid #30363d;
+    border-top: 4px solid #58a6ff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    animation: spin 0.8s linear infinite;
+    margin: 20px auto;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<h2>⚡ LLM Orchestration Engine — Dark Console</h2>
+
+<div class="container">
+
+  <label>Provider:</label><br>
+  <select id="provider">
+    <option value="auto">Auto (Fallback Enabled)</option>
+    <option value="gemini">Gemini Only</option>
+    <option value="ollama">Ollama Only</option>
+    <option value="openai">OpenAI Only</option>
+  </select>
+
+  <textarea id="prompt" placeholder="Type your query here..."></textarea>
+
+  <button onclick="sendPrompt()">Generate</button>
+
+  <div id="output"></div>
+</div>
+
+
+<script>
+async function sendPrompt() {
+  const text = document.getElementById("prompt").value;
+  const provider = document.getElementById("provider").value;
+  const output = document.getElementById("output");
+
+  output.innerHTML = '<div class="loader"></div>';
+
+  const body = {
+    text: text,
+    metadata: { provider_override: provider }
+  };
+
+  try {
+    const resp = await fetch("http://127.0.0.1:8000/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    const data = await resp.json();
+
+    output.innerHTML =
+      `<div class='meta'>
+        Model: <b>${data.model}</b><br>
+        Latency: <b>${data.latency_ms} ms</b><br>
+      </div>
+      ${data.text}`;
+  } catch (e) {
+    output.innerHTML = "❌ Error calling backend: " + e;
+  }
+}
+</script>
+
+</body>
+</html>
