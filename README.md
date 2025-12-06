@@ -1,4 +1,4 @@
-# LLM Orchestration Engine (Option C)
+# LLM Orchestration Engine 
 
 Goals:
 - Reverse prompting, dynamic prompts
