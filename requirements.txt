@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+requests
+openai
+google-generativeai
+faiss-cpu
+sentence-transformers
+transformers
+pytest
+httpx
+rich
+gunicorn
