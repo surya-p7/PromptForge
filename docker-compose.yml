@@ -1,13 +1,25 @@
-version: "3.8"
 services:
-  app:
+  api:
     build: .
+    container_name: promptforge_api
+    restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8000:8000"
+    env_file:
+      - .env
     environment:
-      - LLM_BACKEND=${LLM_BACKEND:-mock}
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OLLAMA_URL=${OLLAMA_URL}
+      ENABLE_OLLAMA: "true"
+    depends_on:
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
     volumes:
-      - ./:/app
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+
+volumes:
+  ollama_data:

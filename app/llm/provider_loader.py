@@ -6,7 +6,7 @@ from .openai_provider import OpenAIProvider
 from .ollama_provider import OllamaProvider
 from .mock_provider import MockProvider
 
-
+import os
 _PROVIDER_CLASSES = {
     "gemini": GeminiProvider,
     "ollama": OllamaProvider,
@@ -38,7 +38,13 @@ def discover_providers(
       - report: dict[name] = {"ok": bool, "error": str | None}
     """
     if preferred_order is None:
-        preferred_order = ["gemini", "ollama", "openai", "mock"]
+        # preferred_order = ["gemini", "ollama", "openai", "mock"]
+        enable_ollama = os.getenv("ENABLE_OLLAMA", "false").lower() == "true"
+
+        preferred_order = ["gemini"]
+        if enable_ollama:
+            preferred_order.append("ollama")
+        preferred_order.extend(["openai", "mock"])
 
     providers: List[BaseLLMProvider] = []
     report: Dict[str, Dict[str, Any]] = {}
